@@ -1,6 +1,7 @@
 import requests
 import csv
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 url = " http://books.toscrape.com/catalogue/rip-it-up-and-start-again_986/index.html"
 page = requests.get(url)
@@ -49,7 +50,12 @@ if page.status_code == 200:
     product_page["image_url"] = image_url
 
     # Enregistrement du fichier csv
-    csv_file = "product_page_" + product_title.replace(":", " ") + ".csv"
+
+    # Définition du nom de fichier csv
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    csv_file = (
+        "product_page_" + product_title.replace(":", " ") + "_" + timestamp + ".csv"
+    )
     with open(csv_file, mode="w", newline="") as file:
         writer = csv.writer(file)
         # les en-têtes
