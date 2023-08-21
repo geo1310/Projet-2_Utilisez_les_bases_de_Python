@@ -1,14 +1,20 @@
+''' 
+Récupération des données sur une page produit
+
+'''
 import requests
 import csv
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-url = " http://books.toscrape.com/catalogue/rip-it-up-and-start-again_986/index.html"
+url = " http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
 page = requests.get(url)
-product_page = {}
+
 
 if page.status_code == 200:
     soup = BeautifulSoup(page.content, "html.parser")
+    product_page = {}
+    
     # Extraction des données
 
     # Titre
@@ -53,9 +59,8 @@ if page.status_code == 200:
 
     # Définition du nom de fichier csv
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    csv_file = (
-        "product_page_" + product_title.replace(":", " ") + "_" + timestamp + ".csv"
-    )
+    csv_file = f"product_page_{product_title.replace(':', '_').replace(' ', '_').replace(',', '_')}_{timestamp}.csv"
+    # Ecriture du fichier csv
     with open(csv_file, mode="w", newline="") as file:
         writer = csv.writer(file)
         # les en-têtes
