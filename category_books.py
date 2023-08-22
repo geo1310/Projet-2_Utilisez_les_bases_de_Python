@@ -48,27 +48,23 @@ if __name__ == "__main__":
         print("Veuillez entrer une Url Valide !!!")
     else:
         if books_list != False:
-            # Enregistrement des données de tous les livres de la categorie
+            # Enregistrement de la liste de tous les livres de la categorie
             url_catalogue = "http://books.toscrape.com/catalogue/"
 
             # Enregistrement du fichier csv des donnees de tous les livres d'une catégorie
             # Définition du nom du fichier csv
             category_name = url.split("/")[-2]
             timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-            csv_file = f"category_books_data_{category_name}_{timestamp}.csv"
+            csv_file = f"category_books_list_{category_name}_{timestamp}.csv"
 
             # Ecriture du fichier csv
             with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
                 writer = csv.writer(file)
-                # Parcours des url des livres de la catégorie
-                headers = None
-                for url_book in books_list:
-                    product_page = book_infos(url_catalogue + url_book)
-                    # les en-têtes
-                    if headers == None:
-                        headers = product_page.keys()
-                        writer.writerow(headers)
-                    # les données
-                    data = product_page.values()
+                # les en-têtes
+                headers = [category_name]
+                writer.writerow(headers)
+                # les données
+                for book in books_list:
+                    data = [book]
                     writer.writerow(data)
             print("Fichier CSV enregistré avec succès : " + csv_file)
