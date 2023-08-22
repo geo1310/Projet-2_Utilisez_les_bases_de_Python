@@ -3,8 +3,9 @@
 
 """
 import requests
+import csv
 from bs4 import BeautifulSoup
-
+from datetime import datetime
 
 def category_books(url, url_books_list=None):
     page = requests.get(url)
@@ -36,8 +37,27 @@ def category_books(url, url_books_list=None):
 
 
 if __name__ == "__main__":
-    books_list = category_books(
-        "http://books.toscrape.com/catalogue/category/books/nonfiction_13/index.html"
-    )
-    for url_book in books_list:
-        print(url_book)
+    url = input('Entrez Url de la Catégorie : ')
+    category_name = url.split("/")[-2]
+    books_list = category_books(url)
+    
+    # Enregistrement du fichier csv
+    # Définition du nom du fichier csv
+    timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
+    csv_file = f"category_books_list_{category_name}_{timestamp}.csv"
+    # Ecriture du fichier csv
+    with open(csv_file, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        # les en-têtes
+        headers = [category_name]
+        writer.writerow(headers)
+        # les données
+        for url_book in books_list:
+            data = [url_book]
+            writer.writerow(data)
+    print("Fichier CSV enregistré avec succès : " + csv_file)
+    
+    
+    
+    
+    
