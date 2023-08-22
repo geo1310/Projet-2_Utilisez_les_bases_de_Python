@@ -7,6 +7,9 @@ import csv
 from bs4 import BeautifulSoup
 from datetime import datetime
 
+from book_infos import book_infos
+
+
 def category_books(url, url_books_list=None):
     page = requests.get(url)
     if page.status_code == 200:
@@ -26,38 +29,46 @@ def category_books(url, url_books_list=None):
         if is_next:
             # Construction de la nouvelle url
             index_url = is_next.find("a").get("href")
-            new_url = url.rsplit("/", 1)[0] + '/' + index_url
-    
+            new_url = url.rsplit("/", 1)[0] + "/" + index_url
+
             category_books(new_url, url_books_list)
 
     else:
         print("La requete a échouée avec le code : ", page.status_code)
+        return False
 
     return url_books_list
 
 
 if __name__ == "__main__":
-    url = input('Entrez Url de la Catégorie : ')
-    category_name = url.split("/")[-2]
-    books_list = category_books(url)
-    
-    # Enregistrement du fichier csv
-    # Définition du nom du fichier csv
-    timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-    csv_file = f"category_books_list_{category_name}_{timestamp}.csv"
-    # Ecriture du fichier csv
-    with open(csv_file, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        # les en-têtes
-        headers = [category_name]
-        writer.writerow(headers)
-        # les données
-        for url_book in books_list:
-            data = [url_book]
-            writer.writerow(data)
-    print("Fichier CSV enregistré avec succès : " + csv_file)
-    
-    
-    
-    
-    
+    url = input("Entrez Url de la Catégorie : ")
+    try:
+        books_list = category_books(url)
+    except:
+        print("Veuillez entrer une Url Valide !!!")
+    else:
+        if books_list != False:
+            # Enregistrement des données de tous les livres de la categorie
+            url_catalogue = "http://books.toscrape.com/catalogue/"
+
+            # Enregistrement du fichier csv des donnees de tous les livres d'une catégorie
+            # Définition du nom du fichier csv
+            category_name = url.split("/")[-2]
+            timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
+            csv_file = f"category_books_data_{category_name}_{timestamp}.csv"
+
+            # Ecriture du fichier csv
+            with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
+                writer = csv.writer(file)
+                # Parcours des url des livres de la catégorie
+                headers = None
+                for url_book in books_list:
+                    product_page = book_infos(url_catalogue + url_book)
+                    # les en-têtes
+                    if headers == None:
+                        headers = product_page.keys()
+                        writer.writerow(headers)
+                    # les données
+                    data = product_page.values()
+                    writer.writerow(data)
+            print("Fichier CSV enregistré avec succès : " + csv_file)

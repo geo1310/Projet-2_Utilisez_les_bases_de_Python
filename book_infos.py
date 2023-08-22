@@ -9,6 +9,7 @@ from datetime import datetime
 
 
 def book_infos(url):
+
     page = requests.get(url)
 
     if page.status_code == 200:
@@ -57,24 +58,30 @@ def book_infos(url):
 
     else:
         print("La requete a échouée avec le code : ", page.status_code)
+        return False
 
     return product_page
 
 
 if __name__ == "__main__":
-    url = input('Entrez Url du Livre : ')
-    product_page = book_infos(url)
-    # Enregistrement du fichier csv
-    # Définition du nom du fichier csv
-    timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-    csv_file = f"book_infos_{product_page['title'].replace(':', '_').replace(' ', '_').replace(',', '_')}_{timestamp}.csv"
-    # Ecriture du fichier csv
-    with open(csv_file, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        # les en-têtes
-        headers = product_page.keys()
-        writer.writerow(headers)
-        # les données
-        data = product_page.values()
-        writer.writerow(data)
-    print("Fichier CSV enregistré avec succès : " + csv_file)
+    url = input("Entrez Url du Livre : ")
+    try:
+        product_page = book_infos(url)
+    except:
+        print("Veuillez entrer une Url Valide !!!")
+    else:
+        if product_page != False:
+            # Enregistrement du fichier csv
+            # Définition du nom du fichier csv
+            timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
+            csv_file = f"book_infos_{product_page['title'].replace(':', '_').replace(' ', '_').replace(',', '_')}_{timestamp}.csv"
+            # Ecriture du fichier csv
+            with open(csv_file, mode="w", newline="") as file:
+                writer = csv.writer(file)
+                # les en-têtes
+                headers = product_page.keys()
+                writer.writerow(headers)
+                # les données
+                data = product_page.values()
+                writer.writerow(data)
+            print("Fichier CSV enregistré avec succès : " + csv_file)
