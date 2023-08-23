@@ -22,7 +22,7 @@ def categories(url):
             categories_url_list.append(
                 "http://books.toscrape.com/" + category_a.get("href")
             )
-
+        categories_url_list.pop(0)
     else:
         print("La requete a échouée avec le code : ", page.status_code)
         return False

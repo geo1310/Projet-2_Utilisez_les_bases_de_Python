@@ -1,5 +1,5 @@
 """ 
-Récupération des données sur une page produit
+Récupére et renvoie les données d'un livre
 
 """
 import requests
@@ -30,7 +30,7 @@ def book_infos(url):
 
         # Image_Url
         image_div = soup.find(class_="item active")
-        image_url = image_div.find("img").get("src")
+        image_url = image_div.find("img").get("src").replace('../../', '')
 
         # Catégorie
         category_ul = soup.find("ul", class_="breadcrumb")

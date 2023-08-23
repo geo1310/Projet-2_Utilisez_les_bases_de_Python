@@ -13,12 +13,11 @@ import csv
 from datetime import datetime
 from book_infos import book_infos
 from category_books import category_books
+from categories_url import categories
 
 
-
-menu = [1, 2, 3, 4]
 menu_choice = ""
-while menu_choice not in menu:
+while True:
     os.system("cls")
     print(
         """
@@ -29,7 +28,8 @@ while menu_choice not in menu:
     3- Extraire les donnees de tous les livres et de toutes les categories
     4- Quitter
 
-    """)
+    """
+    )
 
     menu_choice = input(" Quel est votre choix :")
     match menu_choice:
@@ -38,6 +38,8 @@ while menu_choice not in menu:
             while True:
                 print()
                 url = input("Entrer Url du Livre : ")
+                if url == '':
+                    break
                 try:
                     product_page = book_infos(url)
                 except:
@@ -60,8 +62,10 @@ while menu_choice not in menu:
                         print()
                         print("Fichier CSV enregistré avec succès : " + csv_file)
                         print()
-                        choix_1 = input('Entrer 1 pour une nouvelle requete ou une autre touche pour retourner au menu :')
-                        if choix_1 == '1':
+                        choix_1 = input(
+                            "Entrer 1 pour une nouvelle requete ou une autre touche pour retourner au menu :"
+                        )
+                        if choix_1 == "1":
                             continue
                         else:
                             break
@@ -70,6 +74,8 @@ while menu_choice not in menu:
             while True:
                 print()
                 url = input("Entrer Url de la Catégorie : ")
+                if url =='':
+                    break
                 try:
                     books_list = category_books(url)
                 except:
@@ -83,10 +89,14 @@ while menu_choice not in menu:
                         # Définition du nom du fichier csv
                         category_name = url.split("/")[-2]
                         timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-                        csv_file = f"category_books_data_{category_name}_{timestamp}.csv"
+                        csv_file = (
+                            f"category_books_data_{category_name}_{timestamp}.csv"
+                        )
 
                         # Ecriture du fichier csv
-                        with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
+                        with open(
+                            csv_file, mode="w", newline="", encoding="utf-8"
+                        ) as file:
                             writer = csv.writer(file)
                             # Parcours des url des livres de la catégorie
                             headers = None
@@ -100,18 +110,67 @@ while menu_choice not in menu:
                                 # les données
                                 data = product_page.values()
                                 writer.writerow(data)
-                                print(f'{index} - {product_page["title"]} - enregistré.')
-                                index+=1
+                                print(
+                                    f'{index} - {product_page["title"]} - enregistré.'
+                                )
+                                index += 1
                         print()
-                        print(f"Fichier CSV enregistré avec succès :  {csv_file} avec {index-1} livre(s).")
+                        print(
+                            f"Fichier CSV enregistré avec succès :  {csv_file} avec {index-1} livre(s)."
+                        )
                         print()
-                        choix_2 = input('Entrer 1 pour une nouvelle requete ou une autre touche pour retourner au menu :')
-                        if choix_2 == '1':
+                        choix_2 = input(
+                            "Entrer 1 pour une nouvelle requete ou une autre touche pour retourner au menu :"
+                        )
+                        if choix_2 == "1":
                             continue
                         else:
                             break
+        # Extraire les donnees de tous les livres de toutes les categories
         case "3":
-            print("choix 3")
+            print()
+            print("Récupération de la liste de toutes les catégorie......", end=" ")
+            categories_url = categories("http://books.toscrape.com/index.html")
+            print(f"{len(categories_url)} catégories récupérées.")
+
+            # Enregistrement du fichier csv des donnees de tous les livres de toutes les catégories
+            url_catalogue = "http://books.toscrape.com/catalogue/"
+            # Définition du nom du fichier csv
+            timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
+            csv_file = f"all_books_data_{timestamp}.csv"
+            # Ecriture du fichier csv
+            with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
+                writer = csv.writer(file)
+                headers = None
+                index = 1
+                for categorie in categories_url:
+                    books_url = []
+                    print()
+                    print(
+                        f'Récupération de la liste des livres de la catégorie {categorie.split("/")[6]}......',
+                        end=" ",
+                    )
+                    books_url = category_books(categorie)
+                    print(f"{len(books_url)} livres récupéré(s)")
+                    for url_book in books_url:
+                        product_page = book_infos(url_catalogue + url_book)
+                        # les en-têtes
+                        if headers == None:
+                            headers = product_page.keys()
+                            writer.writerow(headers)
+                        # les données
+                        data = product_page.values()
+                        writer.writerow(data)
+                        print(f'{index} - {product_page["title"]} - enregistré.')
+                        index += 1
+            print()
+            print(
+                f"Fichier CSV enregistré avec succès :  {csv_file} avec {index-1} livre(s)."
+            )
+            print()
+            choix_3 = input("Appuyer sur une touche pour retourner au menu :")
+            if choix_3:
+                continue
         case "4":
             os.system("cls")
             break

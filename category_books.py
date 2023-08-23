@@ -1,5 +1,5 @@
 """ 
- Récupération de tous les livres d'une catégorie 
+ Récupére et renvoie la liste des url de tous les livres d'une catégorie 
 
 """
 import requests
