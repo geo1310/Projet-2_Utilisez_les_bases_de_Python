@@ -1,4 +1,6 @@
 /.venv-projet2
 /.vscode
-__pycache__/
+/images
+/csv
+/__pycache__
 *.csv

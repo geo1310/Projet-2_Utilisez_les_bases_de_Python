@@ -7,6 +7,7 @@ import csv
 import os
 from bs4 import BeautifulSoup
 from datetime import datetime
+from download_image import download_image
 
 
 def book_infos(url):
@@ -30,7 +31,9 @@ def book_infos(url):
 
         # Image_Url
         image_div = soup.find(class_="item active")
-        image_url = "http://books.toscrape.com/" + image_div.find("img").get("src").replace("../../", "")
+        image_url = "http://books.toscrape.com/" + image_div.find("img").get(
+            "src"
+        ).replace("../../", "")
 
         # Catégorie
         category_ul = soup.find("ul", class_="breadcrumb")
@@ -59,6 +62,14 @@ def book_infos(url):
         product_page["review_rating"] = product_infos["Number of reviews"]
         product_page["image_url"] = image_url
 
+        # Nettoyage du nom
+        characters_to_replace = [' ', ',',':','-','&']
+        for char in characters_to_replace:
+            product_title = product_title.replace(char, '_')
+        # Enregistrement de l'image
+        file_name = product_title + "_" + product_infos["UPC"] + ".jpg"
+        download_image(image_url, file_name)
+
     else:
         print("La requete a échouée avec le code : ", page.status_code)
         return False
@@ -83,7 +94,8 @@ if __name__ == "__main__":
                 timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
                 csv_file = f"livre_{product_page['title'].replace(':', '_').replace(' ', '_').replace(',', '_')}_{timestamp}.csv"
                 # Ecriture du fichier csv
-                with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
+                full_path = os.path.join('./csv', csv_file)
+                with open(full_path, mode="w", newline="", encoding="utf-8") as file:
                     writer = csv.writer(file)
                     # les en-têtes
                     headers = product_page.keys()

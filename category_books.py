@@ -40,9 +40,10 @@ def category_books(url, url_books_list=None):
             # Définition du nom du fichier csv
             timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
             csv_file = f"liste_livres_{category_name}_{timestamp}.csv"
-            
+
             # Ecriture du fichier csv
-            with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
+            full_path = os.path.join('./csv', csv_file)
+            with open(full_path, mode="w", newline="", encoding="utf-8") as file:
                 writer = csv.writer(file)
                 # Parcours des url des livres de la catégorie
                 headers = None
