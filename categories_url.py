@@ -4,6 +4,7 @@ Récupère et renvoie la liste de toutes les url des catégories
 """
 import requests
 import csv
+import os
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -31,15 +32,17 @@ def categories(url):
 
 
 if __name__ == "__main__":
+    os.system("cls")
+    print("\nCréation d'un fichier CSV avec la liste des catégories.")
     url = "http://books.toscrape.com/index.html"
     categories_list = categories(url)
     if categories_list != False:
         # Enregistrement du fichier csv
         # Définition du nom du fichier csv
         timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-        csv_file = f"categories_urls_{timestamp}.csv"
+        csv_file = f"categories_liste_{timestamp}.csv"
         # Ecriture du fichier csv
-        with open(csv_file, mode="w", newline="") as file:
+        with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
             # les en-têtes
             headers = ["categories_urls"]
@@ -48,4 +51,4 @@ if __name__ == "__main__":
             for category in categories_list:
                 data = [category]
                 writer.writerow(data)
-        print("Fichier CSV enregistré avec succès : " + csv_file)
+        print("\nFichier CSV enregistré avec succès : " + csv_file + "\n")

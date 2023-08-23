@@ -4,12 +4,12 @@ Récupére et renvoie les données d'un livre
 """
 import requests
 import csv
+import os
 from bs4 import BeautifulSoup
 from datetime import datetime
 
 
 def book_infos(url):
-
     page = requests.get(url)
 
     if page.status_code == 200:
@@ -30,7 +30,7 @@ def book_infos(url):
 
         # Image_Url
         image_div = soup.find(class_="item active")
-        image_url = image_div.find("img").get("src").replace('../../', '')
+        image_url = "http://books.toscrape.com/" + image_div.find("img").get("src").replace("../../", "")
 
         # Catégorie
         category_ul = soup.find("ul", class_="breadcrumb")
@@ -67,24 +67,28 @@ def book_infos(url):
 
 
 if __name__ == "__main__":
-    url = input("Entrez Url du Livre : ")
-    try:
-        product_page = book_infos(url)
-    except:
-        print("Veuillez entrer une Url Valide !!!")
-    else:
-        if product_page != False:
-            # Enregistrement du fichier csv
-            # Définition du nom du fichier csv
-            timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-            csv_file = f"book_infos_{product_page['title'].replace(':', '_').replace(' ', '_').replace(',', '_')}_{timestamp}.csv"
-            # Ecriture du fichier csv
-            with open(csv_file, mode="w", newline="") as file:
-                writer = csv.writer(file)
-                # les en-têtes
-                headers = product_page.keys()
-                writer.writerow(headers)
-                # les données
-                data = product_page.values()
-                writer.writerow(data)
-            print("Fichier CSV enregistré avec succès : " + csv_file)
+    os.system("cls")
+    while True:
+        url = input("Entrer Url du Livre (vide pour quitter): ")
+        if url == "":
+            break
+        try:
+            product_page = book_infos(url)
+        except:
+            print("\nVeuillez entrer une Url Valide !!!\n")
+        else:
+            if product_page != False:
+                # Enregistrement du fichier csv
+                # Définition du nom du fichier csv
+                timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
+                csv_file = f"livre_{product_page['title'].replace(':', '_').replace(' ', '_').replace(',', '_')}_{timestamp}.csv"
+                # Ecriture du fichier csv
+                with open(csv_file, mode="w", newline="", encoding="utf-8") as file:
+                    writer = csv.writer(file)
+                    # les en-têtes
+                    headers = product_page.keys()
+                    writer.writerow(headers)
+                    # les données
+                    data = product_page.values()
+                    writer.writerow(data)
+                print("\nFichier CSV enregistré avec succès : " + csv_file + "\n")
