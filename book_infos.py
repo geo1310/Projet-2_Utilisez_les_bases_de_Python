@@ -23,7 +23,10 @@ def book_infos(url):
 
         # Description
         product_description_prev = soup.find(id="product_description")
-        product_description = product_description_prev.find_next_sibling().string
+        if product_description_prev != None:
+            product_description = product_description_prev.find_next_sibling().string
+        else:
+            product_description = ""
 
         # Image_Url
         image_div = soup.find(class_="item active")

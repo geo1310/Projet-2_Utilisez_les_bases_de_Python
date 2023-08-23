@@ -69,7 +69,7 @@ while menu_choice not in menu:
         case "2":
             while True:
                 print()
-                url = input("Entrez Url de la Catégorie : ")
+                url = input("Entrer Url de la Catégorie : ")
                 try:
                     books_list = category_books(url)
                 except:
@@ -90,6 +90,7 @@ while menu_choice not in menu:
                             writer = csv.writer(file)
                             # Parcours des url des livres de la catégorie
                             headers = None
+                            index = 1
                             for url_book in books_list:
                                 product_page = book_infos(url_catalogue + url_book)
                                 # les en-têtes
@@ -99,8 +100,10 @@ while menu_choice not in menu:
                                 # les données
                                 data = product_page.values()
                                 writer.writerow(data)
+                                print(f'{index} - {product_page["title"]} - enregistré.')
+                                index+=1
                         print()
-                        print("Fichier CSV enregistré avec succès : " + csv_file)
+                        print(f"Fichier CSV enregistré avec succès :  {csv_file} avec {index-1} livre(s).")
                         print()
                         choix_2 = input('Entrer 1 pour une nouvelle requete ou une autre touche pour retourner au menu :')
                         if choix_2 == '1':
