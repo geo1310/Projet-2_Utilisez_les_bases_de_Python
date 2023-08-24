@@ -8,13 +8,17 @@ import os
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-
 def categories(url):
     page = requests.get(url)
 
     if page.status_code == 200:
         soup = BeautifulSoup(page.content, "html.parser")
         categories_url_list = []
+
+        # Vérification de la présence du dossier csv
+        folder = "./csv"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
 
         # Extraction des données
         categories_list_ul = soup.find("ul", class_="nav-list")
@@ -42,7 +46,7 @@ if __name__ == "__main__":
         timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
         csv_file = f"liste_categories_{timestamp}.csv"
         # Ecriture du fichier csv
-        full_path = os.path.join('./csv', csv_file)
+        full_path = os.path.join("./csv", csv_file)
         with open(full_path, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
             # les en-têtes

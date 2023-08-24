@@ -15,6 +15,7 @@ from book_infos import book_infos
 from category_books import category_books
 from categories_url import categories
 
+# Menu
 while True:
     os.system("cls")
     print(
@@ -31,6 +32,7 @@ Menu d'utilisation des differents scripts :
 
     menu_choice = input("Quel est votre choix :")
     match menu_choice:
+
         # Extraire les données d'un seul livre
         case "1":
             while True:
@@ -38,7 +40,7 @@ Menu d'utilisation des differents scripts :
                 if url == "":
                     break
                 try:
-                    product_page = book_infos(url)
+                    product_page, product_title_file = book_infos(url)
                 except:
                     print("Veuillez entrer une Url Valide !!!")
                 else:
@@ -46,10 +48,11 @@ Menu d'utilisation des differents scripts :
                         # Enregistrement du fichier csv
                         # Définition du nom du fichier csv
                         timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-                        csv_file = f"livre_{product_page['title'].replace(':', '_').replace(' ', '_').replace(',', '_')}_{timestamp}.csv"
+                        csv_file = f"livre_{product_title_file}_{timestamp}.csv"
                         # Ecriture du fichier csv
+                        full_path = os.path.join("./csv", csv_file)
                         with open(
-                            csv_file, mode="w", newline="", encoding="utf-8"
+                            full_path, mode="w", newline="", encoding="utf-8"
                         ) as file:
                             writer = csv.writer(file)
                             # les en-têtes
@@ -68,6 +71,7 @@ Menu d'utilisation des differents scripts :
                             continue
                         else:
                             break
+
         # Extraire les donnees de tous les livres d'une catégorie
         case "2":
             while True:
@@ -85,6 +89,7 @@ Menu d'utilisation des differents scripts :
                     continue
                 else:
                     break
+
         # Extraire les donnees de tous les livres de toutes les categories
         case "3":
             print("\nRécupération de la liste de toutes les catégorie......", end=" ")

@@ -17,10 +17,22 @@ def book_infos(url):
         soup = BeautifulSoup(page.content, "html.parser")
         product_page = {}
 
+        # Vérification de la présence du dossier csv
+        folder = "./csv"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
         # Extraction des données
 
         # Titre
         product_title = soup.h1.string
+        product_title_file = product_title
+        # Nettoyage du titre pour les fichiers
+        characters_to_replace = [" ", ",", ":", "-", "&", "/", ".", "\\","\"", "*", "?"]
+        for char in characters_to_replace:
+            product_title_file = product_title_file.replace(char, "_")
+        product_title_file = product_title_file.replace("____", "_").replace('___', '_').replace('__', '_')
+        product_title_file = product_title_file[:50]
 
         # Description
         product_description_prev = soup.find(id="product_description")
@@ -62,19 +74,15 @@ def book_infos(url):
         product_page["review_rating"] = product_infos["Number of reviews"]
         product_page["image_url"] = image_url
 
-        # Nettoyage du nom
-        characters_to_replace = [' ', ',',':','-','&']
-        for char in characters_to_replace:
-            product_title = product_title.replace(char, '_')
         # Enregistrement de l'image
-        file_name = product_title + "_" + product_infos["UPC"] + ".jpg"
+        file_name = product_title_file + "......_" + product_infos["UPC"] + ".jpg"
         download_image(image_url, file_name)
 
     else:
         print("La requete a échouée avec le code : ", page.status_code)
         return False
 
-    return product_page
+    return product_page, product_title_file
 
 
 if __name__ == "__main__":
@@ -84,17 +92,17 @@ if __name__ == "__main__":
         if url == "":
             break
         try:
-            product_page = book_infos(url)
+            product_page, product_title_file = book_infos(url)
         except:
-            print("\nVeuillez entrer une Url Valide !!!\n")
+            print("\nUrl non Valide ou echec de la requete !!!\n")
         else:
             if product_page != False:
                 # Enregistrement du fichier csv
                 # Définition du nom du fichier csv
                 timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-                csv_file = f"livre_{product_page['title'].replace(':', '_').replace(' ', '_').replace(',', '_')}_{timestamp}.csv"
+                csv_file = f"livre_{product_title_file}_{timestamp}.csv"
                 # Ecriture du fichier csv
-                full_path = os.path.join('./csv', csv_file)
+                full_path = os.path.join("./csv", csv_file)
                 with open(full_path, mode="w", newline="", encoding="utf-8") as file:
                     writer = csv.writer(file)
                     # les en-têtes

@@ -13,6 +13,11 @@ from book_infos import book_infos
 def category_books(url, url_books_list=None):
     page = requests.get(url)
     if page.status_code == 200:
+        # Vérification de la présence du dossier csv
+        folder = "./csv"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+            
         category_name = url.split("/")[-2]
         soup = BeautifulSoup(page.content, "html.parser")
         if url_books_list == None:
@@ -39,17 +44,17 @@ def category_books(url, url_books_list=None):
             # Enregistrement du fichier csv des donnees de tous les livres d'une catégorie
             # Définition du nom du fichier csv
             timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-            csv_file = f"liste_livres_{category_name}_{timestamp}.csv"
+            csv_file = f"livres_{category_name}_{timestamp}.csv"
 
             # Ecriture du fichier csv
-            full_path = os.path.join('./csv', csv_file)
+            full_path = os.path.join("./csv", csv_file)
             with open(full_path, mode="w", newline="", encoding="utf-8") as file:
                 writer = csv.writer(file)
                 # Parcours des url des livres de la catégorie et écrit les données sur le fichier csv
                 headers = None
                 index = 1
                 for url_book in url_books_list:
-                    product_page = book_infos(url_catalogue + url_book)
+                    product_page, product_title = book_infos(url_catalogue + url_book)
                     # les en-têtes
                     if headers == None:
                         headers = product_page.keys()
@@ -57,7 +62,7 @@ def category_books(url, url_books_list=None):
                     # les données
                     data = product_page.values()
                     writer.writerow(data)
-                    print(f'{index} - {product_page["title"]} - enregistré.')
+                    print(f'Livre No {index} - {product_page["title"]} : enregistré !!!.')
                     index += 1
             print(
                 f"\nFichier CSV enregistré avec succès :  {csv_file} avec {index-1} livre(s).\n"
