@@ -40,7 +40,7 @@ if __name__ == "__main__":
         # Enregistrement du fichier csv
         # Définition du nom du fichier csv
         timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-        csv_file = f"categories_liste_{timestamp}.csv"
+        csv_file = f"liste_categories_{timestamp}.csv"
         # Ecriture du fichier csv
         full_path = os.path.join('./csv', csv_file)
         with open(full_path, mode="w", newline="", encoding="utf-8") as file:

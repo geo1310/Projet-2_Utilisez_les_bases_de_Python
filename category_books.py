@@ -1,5 +1,5 @@
 """ 
- Récupére la liste des url de tous les livres d'une catégorie et un fichier CSV
+ Récupére la liste des url de tous les livres d'une catégorie et crée un fichier CSV avec leurs données
 
 """
 import requests
@@ -18,7 +18,7 @@ def category_books(url, url_books_list=None):
         if url_books_list == None:
             url_books_list = []
 
-        # Extraction des données de la premier page
+        # Extraction des données de la premiere page
         image_container = soup.find_all("div", class_="image_container")
         for container in image_container:
             book_href = container.find("a").get("href").replace("../../../", "")
@@ -45,7 +45,7 @@ def category_books(url, url_books_list=None):
             full_path = os.path.join('./csv', csv_file)
             with open(full_path, mode="w", newline="", encoding="utf-8") as file:
                 writer = csv.writer(file)
-                # Parcours des url des livres de la catégorie
+                # Parcours des url des livres de la catégorie et écrit les données sur le fichier csv
                 headers = None
                 index = 1
                 for url_book in url_books_list:
