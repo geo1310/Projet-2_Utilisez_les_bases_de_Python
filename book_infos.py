@@ -27,12 +27,13 @@ def book_infos(url):
         # Titre
         product_title = soup.h1.string
         product_title_file = product_title
-        # Nettoyage du titre pour les fichiers
+        # Nettoyage du titre pour enregistrement des fichiers
         characters_to_replace = [" ", ",", ":", "-", "&", "/", ".", "\\","\"", "*", "?"]
         for char in characters_to_replace:
             product_title_file = product_title_file.replace(char, "_")
         product_title_file = product_title_file.replace("____", "_").replace('___', '_').replace('__', '_')
-        product_title_file = product_title_file[:50]
+        if len(product_title_file) > 50:
+            product_title_file = product_title_file[:50] + '......'
 
         # Description
         product_description_prev = soup.find(id="product_description")
@@ -75,8 +76,8 @@ def book_infos(url):
         product_page["image_url"] = image_url
 
         # Enregistrement de l'image
-        file_name = product_title_file + "......_" + product_infos["UPC"] + ".jpg"
-        download_image(image_url, file_name)
+        file_name = product_title_file + '_upc_' + product_infos["UPC"] + ".jpg"
+        download_image(image_url, file_name, category)
 
     else:
         print("La requete a échouée avec le code : ", page.status_code)

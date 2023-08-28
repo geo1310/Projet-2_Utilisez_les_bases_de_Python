@@ -1,13 +1,17 @@
 import requests
 import os
 
-def download_image(url, file_name):
+def download_image(url, file_name, category):
     response = requests.get(url)
     if response.status_code == 200:
         # Vérification de la présence du dossier images
         folder = './images'
         if not os.path.exists(folder):
             os.makedirs('./images')
+        # Création du dossier categorie de l'image
+        folder = "./images/" + category
+        if not os.path.exists(folder):
+            os.makedirs(folder)
             
         full_path = os.path.join(folder, file_name)
         with open(full_path, "wb") as file:

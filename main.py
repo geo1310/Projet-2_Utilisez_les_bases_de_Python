@@ -91,6 +91,7 @@ Menu d'utilisation des differents scripts :
                     break
 
         # Extraire les donnees de tous les livres de toutes les categories
+        
         case "3":
             print("\nRécupération de la liste de toutes les catégorie......", end=" ")
             categories_url = categories("http://books.toscrape.com/index.html")

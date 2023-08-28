@@ -19,6 +19,7 @@ def category_books(url, url_books_list=None):
             os.makedirs(folder)
             
         category_name = url.split("/")[-2]
+        category_name = category_name.split('_')[0]
         soup = BeautifulSoup(page.content, "html.parser")
         if url_books_list == None:
             url_books_list = []
@@ -44,7 +45,7 @@ def category_books(url, url_books_list=None):
             # Enregistrement du fichier csv des donnees de tous les livres d'une catégorie
             # Définition du nom du fichier csv
             timestamp = datetime.now().strftime("%d%m%Y%H%M%S")
-            csv_file = f"livres_{category_name}_{timestamp}.csv"
+            csv_file = f"livres_categorie_{category_name}_{timestamp}.csv"
 
             # Ecriture du fichier csv
             full_path = os.path.join("./csv", csv_file)
@@ -54,7 +55,7 @@ def category_books(url, url_books_list=None):
                 headers = None
                 index = 1
                 for url_book in url_books_list:
-                    product_page, product_title = book_infos(url_catalogue + url_book)
+                    product_page, _ = book_infos(url_catalogue + url_book)
                     # les en-têtes
                     if headers == None:
                         headers = product_page.keys()
